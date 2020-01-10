@@ -1,7 +1,7 @@
 Summary: A screen manager that supports multiple logins on one terminal
 Name: screen
 Version: 4.0.3
-Release: 16%{?dist}
+Release: 18%{?dist}
 License: GPLv2+
 Group: Applications/System
 URL: http://www.gnu.org/software/screen
@@ -27,6 +27,8 @@ Patch11: screen-4.0.2-maxstr.patch
 Patch12: screen-4.0.3-ipv6.patch
 Patch13: screen-4.0.3-resize.patch
 Patch14: screen-4.0.3-cc.patch
+Patch15: screen-fix-term.patch
+Patch16: screen-4.0.3-STIG-GEN003660.patch
 
 %description
 The screen utility allows you to have multiple logins on just one
@@ -49,6 +51,8 @@ support multiple logins on one terminal.
 %patch12 -p1 -b .ipv6
 %patch13 -p2 -b .resize
 %patch14 -p1 -b .cc
+%patch15 -p1 -b .fix-term
+%patch16 -p1 -b .stig-gen003660
 
 %build
 autoconf
@@ -121,6 +125,14 @@ fi
 %config(noreplace) %{_sysconfdir}/pam.d/screen
 
 %changelog
+* Fri Nov 28 2014 Petr Hracek <phracek@redhat.com> - 4.0.3-18
+- screen does not log successful authentication STIG GEN003660
+Resolves #1087517
+
+* Tue Nov 25 2014 Petr Hracek <phracek@redhat.com> - 4.0.3-17
+- $TERM too long
+Resolves #908221
+
 * Tue Jan 25 2011 Miroslav Lichvar <mlichvar@redhat.com> - 4.0.3-16
 - fix potential problems for Common Criteria certification (#665103)
 
@@ -174,7 +186,7 @@ fi
 * Fri Jan 5 2007 Marcela Maslanova <mmaslano@redhat.com> - 4.0.3-2
 - rebuilt (change in spec file)
 
-* Wed Oct 15 2006 Marcela Maslanova <mmaslano@redhat.com> - 4.0.3-1
+* Sun Oct 15 2006 Marcela Maslanova <mmaslano@redhat.com> - 4.0.3-1
 - new version from upstream
 - ipv6 patch #198410
 
@@ -270,16 +282,16 @@ and thus, the patch isn't necessary.)
 - Comment out lines in screenrc causing screen to complain
 at startup.
 
-* Tue Jul 10 2003 Lon Hohberger <lhh@redhat.com> 3.9.15-11
+* Thu Jul 10 2003 Lon Hohberger <lhh@redhat.com> 3.9.15-11
 - Rebuilt 
 
-* Tue Jul 10 2003 Lon Hohberger <lhh@redhat.com> 3.9.15-10
+* Thu Jul 10 2003 Lon Hohberger <lhh@redhat.com> 3.9.15-10
 - Put the bindkey back in for now.
 
-* Mon Jul 01 2003 Lon Hohberger <lhh@redhat.com> 3.9.15-9
+* Tue Jul 01 2003 Lon Hohberger <lhh@redhat.com> 3.9.15-9
 - Rebuilt
 
-* Mon Jul 01 2003 Lon Hohberger <lhh@redhat.com> 3.9.15-8
+* Tue Jul 01 2003 Lon Hohberger <lhh@redhat.com> 3.9.15-8
 - Change screen's behavior to do the following: Attempt to use
 ~/.screen as the screen directory.  Failing that (ie, on files
 systems without Unix sockets support), try using /tmp/screen-<USER>.
@@ -342,10 +354,10 @@ for build 2.
 * Wed Aug 14 2002 Philip Copeland <bryce@redhat.com> 3.9.11-10
 - #65344 - doomed by utf8
 
-* Tue Aug 12 2002 Philip Copeland <bryce@redhat.com> 3.9.11-9
+* Mon Aug 12 2002 Philip Copeland <bryce@redhat.com> 3.9.11-9
 - #60597 - what /shall/ we make the defaults today?
 
-* Thu Jul 17 2002 Philip Copeland <bryce@redhat.com> 3.9.11-8
+* Wed Jul 17 2002 Philip Copeland <bryce@redhat.com> 3.9.11-8
 - Prevent the makefile from stripping the binary
 - Really get rid of the libelf dependancy
 
@@ -400,7 +412,7 @@ for build 2.
 - update to 3.9.8
 - change the .jbj patch and add some more "user" -> "auser" cases
 
-* Thu Aug 15 2000 Crutcher Dunnavant <crutcher@redhat.com>
+* Tue Aug 15 2000 Crutcher Dunnavant <crutcher@redhat.com>
 - Patched the documentation to change the 'C-a C-\' to 'C-a \',
 - which is what is the real behaviour. this fixes bug #16103
 
@@ -460,7 +472,7 @@ for build 2.
 * Wed Jun 16 1999 Bill Nottingham <notting@redhat.com>
 - force tty permissions/group
 
-* Wed Jun 5 1999 Dale Lovelace <dale@redhat.com>
+* Sat Jun 5 1999 Dale Lovelace <dale@redhat.com>
 - permissions on /etc/skel/.screenrc to 644
 
 * Mon Apr 26 1999 Bill Nottingham <notting@redhat.com>
@@ -490,7 +502,7 @@ for build 2.
 * Mon Apr 27 1998 Prospector System <bugs@redhat.com>
 - translations modified for de, fr, tr
 
-* Wed Oct 21 1997 Cristian Gafton <gafton@redhat.com>
+* Tue Oct 21 1997 Cristian Gafton <gafton@redhat.com>
 - upgraded to 3.7.4
 
 * Wed Oct 08 1997 Erik Troan <ewt@redhat.com>
