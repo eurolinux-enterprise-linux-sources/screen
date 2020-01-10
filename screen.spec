@@ -1,7 +1,7 @@
 Summary: A screen manager that supports multiple logins on one terminal
 Name: screen
 Version: 4.0.3
-Release: 18%{?dist}
+Release: 19%{?dist}
 License: GPLv2+
 Group: Applications/System
 URL: http://www.gnu.org/software/screen
@@ -29,6 +29,7 @@ Patch13: screen-4.0.3-resize.patch
 Patch14: screen-4.0.3-cc.patch
 Patch15: screen-fix-term.patch
 Patch16: screen-4.0.3-STIG-GEN003660.patch
+Patch17: screen-4.0.3-reattach.patch
 
 %description
 The screen utility allows you to have multiple logins on just one
@@ -53,6 +54,7 @@ support multiple logins on one terminal.
 %patch14 -p1 -b .cc
 %patch15 -p1 -b .fix-term
 %patch16 -p1 -b .stig-gen003660
+%patch17 -p1 -b .reattach
 
 %build
 autoconf
@@ -125,6 +127,10 @@ fi
 %config(noreplace) %{_sysconfdir}/pam.d/screen
 
 %changelog
+* Thu Nov 19 2015 Petr Hracek <phracek@redhat.com> - 4.0.3-19
+- cannot reattach to screen session after update
+Resolves: #1271131
+
 * Fri Nov 28 2014 Petr Hracek <phracek@redhat.com> - 4.0.3-18
 - screen does not log successful authentication STIG GEN003660
 Resolves #1087517
