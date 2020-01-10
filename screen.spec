@@ -1,7 +1,7 @@
 Summary: A screen manager that supports multiple logins on one terminal
 Name: screen
 Version: 4.0.3
-Release: 15%{?dist}
+Release: 16%{?dist}
 License: GPLv2+
 Group: Applications/System
 URL: http://www.gnu.org/software/screen
@@ -26,6 +26,7 @@ Patch7: screen-4.0.1-args.patch
 Patch11: screen-4.0.2-maxstr.patch
 Patch12: screen-4.0.3-ipv6.patch
 Patch13: screen-4.0.3-resize.patch
+Patch14: screen-4.0.3-cc.patch
 
 %description
 The screen utility allows you to have multiple logins on just one
@@ -47,6 +48,7 @@ support multiple logins on one terminal.
 %patch11 -p1 -b .maxstr
 %patch12 -p1 -b .ipv6
 %patch13 -p2 -b .resize
+%patch14 -p1 -b .cc
 
 %build
 autoconf
@@ -119,6 +121,9 @@ fi
 %config(noreplace) %{_sysconfdir}/pam.d/screen
 
 %changelog
+* Tue Jan 25 2011 Miroslav Lichvar <mlichvar@redhat.com> - 4.0.3-16
+- fix potential problems for Common Criteria certification (#665103)
+
 * Fri Sep 25 2009 Miroslav Lichvar <mlichvar@redhat.com> - 4.0.3-15
 - fix crash when resizing (#515055)
 - try to improve default config (#523647, #506256, #492729)
