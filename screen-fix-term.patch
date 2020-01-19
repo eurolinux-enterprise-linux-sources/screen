@@ -1,0 +1,163 @@
+diff --git a/src/acls.c b/src/acls.c
+index 3f40541..e5a32a4 100644
+--- a/src/acls.c
++++ b/src/acls.c
+@@ -182,7 +182,7 @@ struct acluser **up;
+ #endif
+   (*up)->u_Esc = DefaultEsc;
+   (*up)->u_MetaEsc = DefaultMetaEsc;
+-  strncpy((*up)->u_name, name, 20);
++  strncpy((*up)->u_name, name, MAXLOGINLEN);
+   (*up)->u_password = NULL;
+   if (pass)
+     (*up)->u_password = SaveStr(pass);
+@@ -318,8 +318,8 @@ struct acluser **up;
+     return UserAdd(name, pass, up);
+   if (!strcmp(name, "nobody"))		/* he remains without password */
+     return -1;
+-  strncpy((*up)->u_password, pass ? pass : "", 20);
+-  (*up)->u_password[20] = '\0';
++  strncpy((*up)->u_password, pass ? pass : "", MAXLOGINLEN);
++  (*up)->u_password[MAXLOGINLEN] = '\0';
+   return 0;
+ }
+ #endif
+diff --git a/src/acls.h b/src/acls.h
+index 907e953..42c7c18 100644
+--- a/src/acls.h
++++ b/src/acls.h
+@@ -78,7 +78,7 @@ struct plop
+ typedef struct acluser
+ {
+   struct acluser *u_next;		/* continue the main user list */
+-  char u_name[20+1];		/* login name how he showed up */
++  char u_name[MAXLOGINLEN + 1];		/* login name how he showed up */
+   char *u_password;		/* his password (may be NullStr). */
+   int  u_checkpassword;		/* nonzero if this u_password is valid */
+   int  u_detachwin;		/* the window where he last detached */
+diff --git a/src/comm.c b/src/comm.c
+index 5f4af8a..7705fcb 100644
+--- a/src/comm.c
++++ b/src/comm.c
+@@ -36,6 +36,7 @@
+  */
+ 
+ #include "config.h"
++#include "os.h"
+ #include "acls.h"
+ #include "comm.h"
+ 
+diff --git a/src/display.h b/src/display.h
+index b1ab748..a433e6d 100644
+--- a/src/display.h
++++ b/src/display.h
+@@ -73,7 +73,7 @@ struct display
+   struct win *d_other;		/* pointer to other window */
+   int   d_nonblock;		/* -1 don't block if obufmax reached */
+ 				/* >0: block after nonblock secs */
+-  char  d_termname[40 + 1];	/* $TERM */
++  char  d_termname[MAXTERMLEN + 1];	/* $TERM */
+   char	*d_tentry;		/* buffer for tgetstr */
+   char	d_tcinited;		/* termcap inited flag */
+   int	d_width, d_height;	/* width/height of the screen */
+diff --git a/src/os.h b/src/os.h
+index 5c17c83..bc71c97 100644
+--- a/src/os.h
++++ b/src/os.h
+@@ -521,3 +521,8 @@ typedef struct fd_set { int fds_bits[1]; } fd_set;
+  */
+ #define IOSIZE		4096
+ 
++/* Changing those you won't be able to attach to your old sessions
++ * when changing those values in official tree don't forget to bump
++ * MSG_VERSION */
++#define MAXTERMLEN  50
++#define MAXLOGINLEN 256
+diff --git a/src/process.c b/src/process.c
+index 7817ac8..a3c2e3d 100644
+--- a/src/process.c
++++ b/src/process.c
+@@ -2649,9 +2649,9 @@ int key;
+       s = NULL;
+       if (ParseSaveStr(act, &s))
+ 	break;
+-      if (strlen(s) >= 20)
++      if (strlen(s) >= MAXTERMLEN)
+ 	{
+-	  OutputMsg(0, "%s: term: argument too long ( < 20)", rc_name);
++     OutputMsg(0, "%s: term: argument too long ( < %d)", rc_name, MAXTERMLEN);
+ 	  free(s);
+ 	  break;
+ 	}
+diff --git a/src/screen.c b/src/screen.c
+index cd0c71b..7a21762 100644
+--- a/src/screen.c
++++ b/src/screen.c
+@@ -995,10 +995,10 @@ char **av;
+ 
+   if (home == 0 || *home == '\0')
+     home = ppp->pw_dir;
+-  if (strlen(LoginName) > 20)
++  if (strlen(LoginName) > MAXLOGINLEN)
+     Panic(0, "LoginName too long - sorry.");
+ #ifdef MULTIUSER
+-  if (multi && strlen(multi) > 20)
++  if (multi && strlen(multi) > MAXLOGINLEN)
+     Panic(0, "Screen owner name too long - sorry.");
+ #endif
+   if (strlen(home) > MAXPATHLEN - 25)
+diff --git a/src/screen.h b/src/screen.h
+index 1a388e3..30ecefb 100644
+--- a/src/screen.h
++++ b/src/screen.h
+@@ -202,32 +202,32 @@ struct msg
+ 	  int nargs;
+ 	  char line[MAXPATHLEN];
+ 	  char dir[MAXPATHLEN];
+-	  char screenterm[20];	/* is screen really "screen" ? */
++     char screenterm[MAXTERMLEN];	/* is screen really "screen" ? */
+ 	}
+       create;
+       struct
+ 	{
+-	  char auser[20 + 1];	/* username */
++     char auser[MAXLOGINLEN + 1];	/* username */
+ 	  int apid;		/* pid of frontend */
+ 	  int adaptflag;	/* adapt window size? */
+ 	  int lines, columns;	/* display size */
+ 	  char preselect[20];
+ 	  int esc;		/* his new escape character unless -1 */
+ 	  int meta_esc;		/* his new meta esc character unless -1 */
+-	  char envterm[40 + 1];	/* terminal type */
++     char envterm[MAXTERMLEN + 1];	/* terminal type */
+ 	  int encoding;		/* encoding of display */
+ 	  int detachfirst;      /* whether to detach remote sessions first */
+ 	}
+       attach;
+       struct 
+ 	{
+-	  char duser[20 + 1];	/* username */
++     char duser[MAXLOGINLEN + 1];	/* username */
+ 	  int dpid;		/* pid of frontend */
+ 	}
+       detach;
+       struct 
+ 	{
+-	  char auser[20 + 1];	/* username */
++     char auser[MAXLOGINLEN + 1];	/* username */
+ 	  int nargs;
+ 	  char cmd[MAXPATHLEN];	/* command */
+ 	  int apid;		/* pid of frontend */
+diff --git a/src/socket.c b/src/socket.c
+index 1f04284..32c5047 100644
+--- a/src/socket.c
++++ b/src/socket.c
+@@ -1528,7 +1528,7 @@ static void PasswordProcessInput __P((char *, int));
+ 
+ struct pwdata {
+   int l;
+-  char buf[20 + 1];
++  char buf[MAXLOGINLEN + 1];
+   struct msg m;
+ };
+ 

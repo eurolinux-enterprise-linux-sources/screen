@@ -4,7 +4,7 @@
 Summary: A screen manager that supports multiple logins on one terminal
 Name: screen
 Version: 4.1.0
-Release: 0.19.20120314git3c2946%{?dist}
+Release: 0.21.20120314git3c2946%{?dist}
 License: GPLv2+
 Group: Applications/System
 URL: http://www.gnu.org/software/screen
@@ -14,6 +14,8 @@ Requires(post): /sbin/install-info
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: ncurses-devel pam-devel libutempter-devel autoconf texinfo
 BuildRequires: automake
+# for %%_tmpfilesdir macro
+BuildRequires: systemd
 
 #Source0: ftp://ftp.uni-erlangen.de/pub/utilities/screen/screen-%{version}.tar.gz
 # snapshot from git://git.savannah.gnu.org/screen.git
@@ -31,6 +33,7 @@ Patch8: screen-4.1.0-crypt.patch
 Patch9: screen-4.1.0-long-term.patch
 Patch10: screen-help-update.patch
 Patch11: screen-altscreen.patch
+Patch12: screen-fix-term.patch
 
 %description
 The screen utility allows you to have multiple logins on just one
@@ -55,6 +58,7 @@ support multiple logins on one terminal.
 %patch9 -p2 -b .long-term
 %patch10 -p2 -b .help-update
 %patch11 -p2 -b .altscreen.patch
+%patch12 -p2 -b .fix-term
 
 
 %build
@@ -103,8 +107,8 @@ install -p -m 0644 %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/pam.d/screen
 mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/run/screen
 
 # And tell systemd to recreate it on start with tmpfs
-mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/tmpfiles.d
-cat <<EOF > $RPM_BUILD_ROOT%{_sysconfdir}/tmpfiles.d/screen.conf
+mkdir -p $RPM_BUILD_ROOT%{_tmpfilesdir}
+cat <<EOF > $RPM_BUILD_ROOT%{_tmpfilesdir}/screen.conf
 # screen needs directory in /var/run
 %if %{with multiuser}
 d %{_localstatedir}/run/screen 0755 root root
@@ -141,7 +145,7 @@ fi
 %{_datadir}/screen
 %config(noreplace) %{_sysconfdir}/screenrc
 %config(noreplace) %{_sysconfdir}/pam.d/screen
-%{_sysconfdir}/tmpfiles.d/screen.conf
+%{_tmpfilesdir}/screen.conf
 %if %{with multiuser}
 %attr(4755,root,root) %{_bindir}/screen
 %attr(755,root,root) %{_localstatedir}/run/screen
@@ -151,6 +155,19 @@ fi
 %endif
 
 %changelog
+* Thu Aug 13 2015 Scientific Linux Auto Patch Process <SCIENTIFIC-LINUX-DEVEL@LISTSERV.FNAL.GOV>
+- Eliminated rpmbuild "bogus date" error due to inconsistent weekday,
+  by assuming the date is correct and changing the weekday.
+
+* Tue Jun 30 2015 Petr Hracek <phracek@redhat.com> - 4.1.0-0.21.20120314git3c2946
+- 'LoginName too long' with login name greater then 20 characters
+- Resolves: #1119794
+
+* Mon Jun 29 2015 Petr Hracek <phracek> - 4.1.0-0.20.20120314git3c2946
+- Multiple packages are installing files under /etc/tmpfiles.d
+- comply http://fedoraproject.org/wiki/Packaging:Guidelines#Tmpfiles.d
+- Resolves: rhbz#1121958
+
 * Fri Jan 24 2014 Daniel Mach <dmach@redhat.com> - 4.1.0-0.19.20120314git3c2946
 - Mass rebuild 2014-01-24
 
