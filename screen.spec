@@ -4,7 +4,7 @@
 Summary: A screen manager that supports multiple logins on one terminal
 Name: screen
 Version: 4.1.0
-Release: 0.21.20120314git3c2946%{?dist}
+Release: 0.22.20120314git3c2946%{?dist}
 License: GPLv2+
 Group: Applications/System
 URL: http://www.gnu.org/software/screen
@@ -34,6 +34,7 @@ Patch9: screen-4.1.0-long-term.patch
 Patch10: screen-help-update.patch
 Patch11: screen-altscreen.patch
 Patch12: screen-fix-term.patch
+Patch13: screen-reattach.patch
 
 %description
 The screen utility allows you to have multiple logins on just one
@@ -59,6 +60,7 @@ support multiple logins on one terminal.
 %patch10 -p2 -b .help-update
 %patch11 -p2 -b .altscreen.patch
 %patch12 -p2 -b .fix-term
+%patch13 -p2 -b .cannot-reattach
 
 
 %build
@@ -155,9 +157,13 @@ fi
 %endif
 
 %changelog
-* Thu Aug 13 2015 Scientific Linux Auto Patch Process <SCIENTIFIC-LINUX-DEVEL@LISTSERV.FNAL.GOV>
+* Thu Nov 05 2015 Scientific Linux Auto Patch Process <SCIENTIFIC-LINUX-DEVEL@LISTSERV.FNAL.GOV>
 - Eliminated rpmbuild "bogus date" error due to inconsistent weekday,
   by assuming the date is correct and changing the weekday.
+
+* Tue Jun 30 2015 Petr Hracek <phracek@redhat.com> - 4.1.0-0.22.20120314git3c2946
+- cannot reattach to screen sessions (regression 'LoginName to long')
+- Resolves: #1253697
 
 * Tue Jun 30 2015 Petr Hracek <phracek@redhat.com> - 4.1.0-0.21.20120314git3c2946
 - 'LoginName too long' with login name greater then 20 characters
