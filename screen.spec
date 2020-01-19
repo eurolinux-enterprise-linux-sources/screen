@@ -4,7 +4,7 @@
 Summary: A screen manager that supports multiple logins on one terminal
 Name: screen
 Version: 4.1.0
-Release: 0.23.20120314git3c2946%{?dist}
+Release: 0.25.20120314git3c2946%{?dist}
 License: GPLv2+
 Group: Applications/System
 URL: http://www.gnu.org/software/screen
@@ -36,6 +36,7 @@ Patch11: screen-altscreen.patch
 Patch12: screen-fix-term.patch
 Patch13: screen-reattach.patch
 Patch14: screen-STIG-GEN003660.patch
+Patch15: screen-4.1.0-caption-padding.patch
 
 %description
 The screen utility allows you to have multiple logins on just one
@@ -63,6 +64,7 @@ support multiple logins on one terminal.
 %patch12 -p2 -b .fix-term
 %patch13 -p2 -b .cannot-reattach
 %patch14 -p2 -b .STIG-GEN003660
+%patch15 -p2 -b .caption-padding
 
 
 %build
@@ -159,9 +161,16 @@ fi
 %endif
 
 %changelog
+* Tue Oct 04 2017 Josef Ridky <jridky@redhat.com> - 4.1.0-0.25.2012314git3c2946
+- Resolves: #1423036 - fix issue with coloring when using caption padding
+
+* Thu Jun 30 2016 Petr Hracek <phracek@redhat.com> - 4.1.0-0.24.20120314git3c2946
+- Build has to be bigger then RHEL-7.2
+- Related: #1196239
+
 * Fri Jan 15 2016 Petr Hracek <phracek@redhat.com> - 4.1.0-0.23.20120314git3c2946
 - screen does not log successful authentication messages with STIG GEN003660 
-- Resolves: #1299394
+- Resolves: #1196239
 
 * Thu Oct 15 2015 Petr Hracek <phracek@redhat.com> - 4.1.0-0.22.20120314git3c2946
 - cannot reattach to screen sessions (regression 'LoginName to long')

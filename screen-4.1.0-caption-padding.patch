@@ -1,0 +1,14 @@
+diff -urNp old/src/screen.c new/src/screen.c
+--- old/src/screen.c	2017-10-04 09:49:28.274367045 +0200
++++ new/src/screen.c	2017-10-04 09:50:40.154585607 +0200
+@@ -2278,8 +2278,8 @@ int padlen;
+ 	  while (i-- > 0)
+ 	    *pn-- = ' ';
+ 	  numpad--;
+-	  if (r && p - buf == winmsg_rendpos[r - 1])
+-	    winmsg_rendpos[--r] = pn - buf;
++	  if (r && p - buf + 1 == winmsg_rendpos[r - 1])
++	    winmsg_rendpos[--r] = pn - buf + 1;
+ 	}
+     }
+   return pn2;
