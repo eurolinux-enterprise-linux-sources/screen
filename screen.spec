@@ -4,7 +4,7 @@
 Summary: A screen manager that supports multiple logins on one terminal
 Name: screen
 Version: 4.1.0
-Release: 0.22.20120314git3c2946%{?dist}
+Release: 0.23.20120314git3c2946%{?dist}
 License: GPLv2+
 Group: Applications/System
 URL: http://www.gnu.org/software/screen
@@ -35,6 +35,7 @@ Patch10: screen-help-update.patch
 Patch11: screen-altscreen.patch
 Patch12: screen-fix-term.patch
 Patch13: screen-reattach.patch
+Patch14: screen-STIG-GEN003660.patch
 
 %description
 The screen utility allows you to have multiple logins on just one
@@ -61,6 +62,7 @@ support multiple logins on one terminal.
 %patch11 -p2 -b .altscreen.patch
 %patch12 -p2 -b .fix-term
 %patch13 -p2 -b .cannot-reattach
+%patch14 -p2 -b .STIG-GEN003660
 
 
 %build
@@ -157,11 +159,11 @@ fi
 %endif
 
 %changelog
-* Thu Nov 05 2015 Scientific Linux Auto Patch Process <SCIENTIFIC-LINUX-DEVEL@LISTSERV.FNAL.GOV>
-- Eliminated rpmbuild "bogus date" error due to inconsistent weekday,
-  by assuming the date is correct and changing the weekday.
+* Fri Jan 15 2016 Petr Hracek <phracek@redhat.com> - 4.1.0-0.23.20120314git3c2946
+- screen does not log successful authentication messages with STIG GEN003660 
+- Resolves: #1299394
 
-* Tue Jun 30 2015 Petr Hracek <phracek@redhat.com> - 4.1.0-0.22.20120314git3c2946
+* Thu Oct 15 2015 Petr Hracek <phracek@redhat.com> - 4.1.0-0.22.20120314git3c2946
 - cannot reattach to screen sessions (regression 'LoginName to long')
 - Resolves: #1253697
 

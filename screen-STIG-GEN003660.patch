@@ -1,0 +1,25 @@
+diff --git a/src/attacher.c b/src/attacher.c
+index 2565a0f..9e916eb 100644
+--- a/src/attacher.c
++++ b/src/attacher.c
+@@ -37,6 +37,10 @@
+ 
+ #include <pwd.h>
+ 
++#ifndef NOSYSLOG
++#include <syslog.h>
++#endif
++
+ static int WriteMessage __P((int, struct msg *));
+ static sigret_t AttacherSigInt __P(SIGPROTOARG);
+ #if defined(SIGWINCH) && defined(TIOCGWINSZ)
+@@ -1001,6 +1005,9 @@ screen_builtin_lck()
+       bzero(cp1, strlen(cp1));
+     }
+   bzero(cp1, strlen(cp1));
++#ifndef NOSYSLOG
++  syslog(LOG_AUTHPRIV | LOG_NOTICE, "authentication success; logname=%s uid=%d", ppp->pw_name, ppp->pw_uid);
++#endif
+   debug("password ok.\n");
+ }
+ 
